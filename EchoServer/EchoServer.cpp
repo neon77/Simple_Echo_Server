@@ -22,12 +22,13 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 	unsigned short port = atoi(argv[1]);
-
+	std::ofstream filelog(std::string(argv[1]) + ".log");
 	WSADATA wsaData;
 	int ret = WSAStartup(MAKEWORD(2, 2), &wsaData);
 	if (NO_ERROR != ret)
 	{
 		std::cout << CurrentTime() << "WSAStartup failed with error : " << ret << std::endl;
+		filelog << CurrentTime() << "WSAStartup failed with error : " << ret << std::endl;
 		system("pause");
 		return -2;
 	}
@@ -37,6 +38,8 @@ int main(int argc, char* argv[])
 	{
 		std::cout << CurrentTime() << "create listen socket failed!" << std::endl;
 		std::cout << CurrentTime() << "socket error [ " << WSAGetLastError() << " ]" << std::endl;
+		filelog << CurrentTime() << "create listen socket failed!" << std::endl;
+		filelog << CurrentTime() << "socket error [ " << WSAGetLastError() << " ]" << std::endl;
 		system("pause");
 		return -3;
 	}
@@ -52,6 +55,8 @@ int main(int argc, char* argv[])
 	{
 		std::cout << CurrentTime() << "bind failed!" << std::endl;
 		std::cout << CurrentTime() << "socket error [ " << WSAGetLastError() << " ]" << std::endl;
+		filelog << CurrentTime() << "bind failed!" << std::endl;
+		filelog << CurrentTime() << "socket error [ " << WSAGetLastError() << " ]" << std::endl;
 		system("pause");
 		return -4;
 	}
@@ -61,12 +66,16 @@ int main(int argc, char* argv[])
 	{
 		std::cout << CurrentTime() << "listen failed!" << std::endl;
 		std::cout << CurrentTime() << "socket error [ " << WSAGetLastError() << " ]" << std::endl;
+		filelog << CurrentTime() << "listen failed!" << std::endl;
+		filelog << CurrentTime() << "socket error [ " << WSAGetLastError() << " ]" << std::endl;
 		system("pause");
 		return -5;
 	}
 
 	std::cout << CurrentTime() << "port : " << port << std::endl;
 	std::cout << CurrentTime() << "waiting for client to connect..." << std::endl;
+	filelog << CurrentTime() << "port : " << port << std::endl;
+	filelog << CurrentTime() << "waiting for client to connect..." << std::endl;
 
 	struct sockaddr_in clientaddr;
 	memset(&clientaddr, 0, sizeof(clientaddr));
@@ -76,6 +85,8 @@ int main(int argc, char* argv[])
 	{
 		std::cout << CurrentTime() << "accept failed!" << std::endl;
 		std::cout << CurrentTime() << "socket error [ " << WSAGetLastError() << " ]" << std::endl;
+		filelog << CurrentTime() << "accept failed!" << std::endl;
+		filelog << CurrentTime() << "socket error [ " << WSAGetLastError() << " ]" << std::endl;
 		closesocket(clientsocket);
 		WSACleanup();
 		system("pause");
@@ -100,16 +111,20 @@ int main(int argc, char* argv[])
 		if (0 < recvret)
 		{
 			std::cout << CurrentTime() << recvret << " bytes received!" << std::endl;
+			filelog << CurrentTime() << recvret << " bytes received!" << std::endl;
 		}
 		else if (0 == recvret)
 		{
 			std::cout << CurrentTime() << "connection closed\n" << std::endl;
+			filelog << CurrentTime() << "connection closed\n" << std::endl;
 			break;
 		}
 		else
 		{
 			std::cout << CurrentTime() << "recv failed!" << std::endl;
 			std::cout << CurrentTime() << "socket error [ " << WSAGetLastError() << " ]" << std::endl;
+			filelog << CurrentTime() << "recv failed!" << std::endl;
+			filelog << CurrentTime() << "socket error [ " << WSAGetLastError() << " ]" << std::endl;
 			break;
 		}
 
@@ -119,6 +134,8 @@ int main(int argc, char* argv[])
 		{
 			std::cout << CurrentTime() << "listen failed!" << std::endl;
 			std::cout << CurrentTime() << "socket error [ " << WSAGetLastError() << " ]" << std::endl;
+			filelog << CurrentTime() << "listen failed!" << std::endl;
+			filelog << CurrentTime() << "socket error [ " << WSAGetLastError() << " ]" << std::endl;
 			break;
 		}
 	}
